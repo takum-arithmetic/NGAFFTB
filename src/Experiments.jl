@@ -77,10 +77,7 @@ let
 	# we are within the let..end scope, this simulates a static variable
 	last_output_length = 0
 
-	function _print_progress(
-		progress::Matrix{_MeasurementState},
-		experiment::Experiment,
-	)
+	function _print_progress(progress::Matrix{_MeasurementState}, experiment::Experiment)
 		# make a local copy
 		progress = copy(progress)
 
@@ -136,19 +133,19 @@ function ExperimentResults(experiment::Experiment)
 		# run the preparation function that computes any general
 		# things that do not change with each number type
 		local preparation
-#		try
-			preparation = get_preparation(parameters)
-#		catch e
-			# Something went wrong in the preparation, making
-			# it an unsuitable example. We just set all
-			# the types to a measurement error and to done
-#			measurement[1:length(experiment.number_types), i] .=
-#				MatrixSingular::MeasurementError
-#			progress[1:length(experiment.number_types), i] .=
-#				done
-#
-#			continue
-#		end
+		#		try
+		preparation = get_preparation(parameters)
+		#		catch e
+		# Something went wrong in the preparation, making
+		# it an unsuitable example. We just set all
+		# the types to a measurement error and to done
+		#			measurement[1:length(experiment.number_types), i] .=
+		#				MatrixSingular::MeasurementError
+		#			progress[1:length(experiment.number_types), i] .=
+		#				done
+		#
+		#			continue
+		#		end
 
 		@threads for j in 1:length(experiment.number_types)
 			# set the current problem to active
@@ -157,10 +154,7 @@ function ExperimentResults(experiment::Experiment)
 			# print the current status when the lock is not
 			# held, otherwise just keep going
 			if trylock(print_lock)
-				_print_progress(
-					progress,
-					experiment
-				)
+				_print_progress(progress, experiment)
 				unlock(print_lock)
 			end
 
@@ -176,10 +170,7 @@ function ExperimentResults(experiment::Experiment)
 			# set the current problem to done
 			progress[j, i] = done
 			if trylock(print_lock)
-				_print_progress(
-					progress,
-					experiment
-				)
+				_print_progress(progress, experiment)
 				unlock(print_lock)
 			end
 		end
@@ -200,7 +191,7 @@ function write_experiment_results(experiment_results::ExperimentResults)
 	local measurement_type_instance
 
 	valid_measurements = experiment_results.measurement[typeof.(
-		experiment_results.measurement
+		experiment_results.measurement,
 	) .<: AbstractExperimentMeasurement]
 
 	if length(valid_measurements) == 0
@@ -339,7 +330,11 @@ end
 	relative_error::Float128
 end
 
-function get_measurement(::Type{T}, parameters::PDEExperimentParameters, preparation::PDEExperimentPreparation) where {T <: AbstractFloat}
+function get_measurement(
+	::Type{T},
+	parameters::PDEExperimentParameters,
+	preparation::PDEExperimentPreparation,
+) where {T <: AbstractFloat}
 	local solution_approx
 
 	try
@@ -376,7 +371,9 @@ end
 
 function get_preparation(parameters::ImageExperimentParameters)
 	# Load the image file
-	return ImageExperimentPreparation(; image = RGB{Float128}.(load(parameters.file_name)))
+	return ImageExperimentPreparation(;
+		image = RGB{Float128}.(load(parameters.file_name)),
+	)
 end
 
 @kwdef struct ImageExperimentMeasurement <: AbstractExperimentMeasurement
@@ -384,7 +381,11 @@ end
 	relative_error::Float128
 end
 
-function get_measurement(::Type{T}, parameters::ImageExperimentParameters, preparation::ImageExperimentPreparation) where {T <: AbstractFloat}
+function get_measurement(
+	::Type{T},
+	parameters::ImageExperimentParameters,
+	preparation::ImageExperimentPreparation,
+) where {T <: AbstractFloat}
 	local image_roundtrip
 
 	try
@@ -431,7 +432,13 @@ end
 	stft_exact::Matrix{Complex{Float128}}
 end
 
-function run_stft(::Type{T}, samples::Vector{Float64}, window_size::Int, hop_size::Int, zero_padding_factor::Int) where {T <: AbstractFloat}
+function run_stft(
+	::Type{T},
+	samples::Vector{Float64},
+	window_size::Int,
+	hop_size::Int,
+	zero_padding_factor::Int,
+) where {T <: AbstractFloat}
 	# determine the STFT segment count, as we have established it
 	# as a multiple of the hop size. This is why we blindly convert
 	# to Int, as any deviation would yield an inexact error, ensuring
@@ -443,8 +450,7 @@ function run_stft(::Type{T}, samples::Vector{Float64}, window_size::Int, hop_siz
 	# we prepare the filter applied to our segments, making
 	# use of the Hann function k -> sin²(π(k-1)/(window_size-1)) with
 	# segment indices i in {1,...,window_size}
-	filter = sinpi.(T.(collect(0:(window_size - 1))) ./
-		T(window_size - 1)) .^ 2
+	filter = sinpi.(T.(collect(0:(window_size - 1))) ./ T(window_size - 1)) .^ 2
 
 	# with zero padding you add a multiple of the window size as zeros
 	# at the end of each segment
@@ -481,7 +487,7 @@ function run_stft(::Type{T}, samples::Vector{Float64}, window_size::Int, hop_siz
 		end
 
 		# enter the result into the result matrix
-		result[:,s] = segment_fft
+		result[:, s] = segment_fft
 	end
 
 	return result
@@ -496,7 +502,10 @@ function get_preparation(parameters::AudioExperimentParameters)
 
 	# we need at least as many samples as our window size
 	if length(samples) < parameters.window_size
-		samples = vcat(samples, zeros(parameters.window_size - length(samples)))
+		samples = vcat(
+			samples,
+			zeros(parameters.window_size - length(samples)),
+		)
 	end
 
 	let
@@ -507,21 +516,30 @@ function get_preparation(parameters::AudioExperimentParameters)
 		hop_area_size = length(samples) - parameters.window_size
 
 		if hop_area_size % parameters.hop_size != 0
-			samples = vcat(samples,
+			samples = vcat(
+				samples,
 				zeros(
 					Int(
 						ceil(
-							hop_area_size / parameters.hop_size
-						)
-					) * parameters.hop_size -
-					hop_area_size
-				)
+							hop_area_size /
+							parameters.hop_size,
+						),
+					) *
+					parameters.hop_size -
+					hop_area_size,
+				),
 			)
 		end
 	end
 
 	# determine the reference solution
-	stft_exact = run_stft(Float128, samples, parameters.window_size, parameters.hop_size, parameters.zero_padding_factor)
+	stft_exact = run_stft(
+		Float128,
+		samples,
+		parameters.window_size,
+		parameters.hop_size,
+		parameters.zero_padding_factor,
+	)
 
 	return AudioExperimentPreparation(; samples = samples, stft_exact = stft_exact)
 end
@@ -531,8 +549,18 @@ end
 	relative_error::Float128
 end
 
-function get_measurement(::Type{T}, parameters::AudioExperimentParameters, preparation::AudioExperimentPreparation) where {T <: AbstractFloat}
-	stft_approx = run_stft(T, preparation.samples, parameters.window_size, parameters.hop_size, parameters.zero_padding_factor)
+function get_measurement(
+	::Type{T},
+	parameters::AudioExperimentParameters,
+	preparation::AudioExperimentPreparation,
+) where {T <: AbstractFloat}
+	stft_approx = run_stft(
+		T,
+		preparation.samples,
+		parameters.window_size,
+		parameters.hop_size,
+		parameters.zero_padding_factor,
+	)
 
 	# Catch a possible error case
 	if stft_approx == nothing

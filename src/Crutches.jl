@@ -10,15 +10,15 @@ using Quadmath
 using Takums
 
 # rem for Posits and Takums
-Base.rem(x::LinearTakum8,y::LinearTakum8) = LinearTakum8(rem(Float64(x), Float64(y)))
-Base.rem(x::LinearTakum16,y::LinearTakum16) = LinearTakum16(rem(Float64(x), Float64(y)))
-Base.rem(x::LinearTakum32,y::LinearTakum32) = LinearTakum32(rem(Float64(x), Float64(y)))
-Base.rem(x::LinearTakum64,y::LinearTakum64) = LinearTakum64(rem(Float128(x), Float128(y)))
+Base.rem(x::LinearTakum8, y::LinearTakum8) = LinearTakum8(rem(Float64(x), Float64(y)))
+Base.rem(x::LinearTakum16, y::LinearTakum16) = LinearTakum16(rem(Float64(x), Float64(y)))
+Base.rem(x::LinearTakum32, y::LinearTakum32) = LinearTakum32(rem(Float64(x), Float64(y)))
+Base.rem(x::LinearTakum64, y::LinearTakum64) = LinearTakum64(rem(Float128(x), Float128(y)))
 
-Base.rem(x::Posit8,y::Posit8) = Posit8(rem(Float64(x), Float64(y)))
-Base.rem(x::Posit16,y::Posit16) = Posit16(rem(Float64(x), Float64(y)))
-Base.rem(x::Posit32,y::Posit32) = Posit32(rem(Float64(x), Float64(y)))
-Base.rem(x::Posit64,y::Posit64) = Posit64(rem(Float128(x), Float128(y)))
+Base.rem(x::Posit8, y::Posit8) = Posit8(rem(Float64(x), Float64(y)))
+Base.rem(x::Posit16, y::Posit16) = Posit16(rem(Float64(x), Float64(y)))
+Base.rem(x::Posit32, y::Posit32) = Posit32(rem(Float64(x), Float64(y)))
+Base.rem(x::Posit64, y::Posit64) = Posit64(rem(Float128(x), Float128(y)))
 
 # irrational conversion for bfloat16
 BFloat16s.BFloat16(i::Irrational) = BFloat16(Float32(i))

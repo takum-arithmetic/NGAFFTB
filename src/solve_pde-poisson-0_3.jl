@@ -9,7 +9,14 @@ using PDE
 write_experiment_results(
 	ExperimentResults(
 		Experiment(;
-			parameters = [PDEExperimentParameters(PoissonPDEParameters(; Nx = Nx, σ = 0.3)) for Nx in 2:100],
+			parameters = [
+				PDEExperimentParameters(
+					PoissonPDEParameters(;
+						Nx = Nx,
+						σ = 0.3,
+					),
+				) for Nx in 2:100
+			],
 			number_types = Experiments.all_number_types,
 		),
 	),

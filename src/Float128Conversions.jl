@@ -92,11 +92,8 @@ function Takums.Takum64(x::Float128)
 
 	# assemble 128-bit takum
 	t128 =
-		(UInt128(S) << 127) |
-		(UInt128(D) << 126) |
-		(UInt128(R) << 123) |
-		(UInt128(C) << (123 - r)) |
-		M
+		(UInt128(S) << 127) | (UInt128(D) << 126) | (UInt128(R) << 123) |
+		(UInt128(C) << (123 - r)) | M
 
 	# round to 64-bit, adhering to proper saturation
 	t64 = reinterpret(
@@ -273,11 +270,8 @@ function Takums.LinearTakum64(x::Float128)
 
 	# assemble 128-bit linear takum
 	t128 =
-		(UInt128(S) << 127) |
-		(UInt128(D) << 126) |
-		(UInt128(R) << 123) |
-		(UInt128(C) << (123 - r)) |
-		M
+		(UInt128(S) << 127) | (UInt128(D) << 126) | (UInt128(R) << 123) |
+		(UInt128(C) << (123 - r)) | M
 
 	# round to 64-bit, adhering to proper saturation
 	t64 = reinterpret(
@@ -462,11 +456,8 @@ function Posits.Posit64(x::Float128)
 
 	# assemble 128-bit posit
 	t128 =
-		(UInt128(S) << 127) |
-		(R << (p + 3)) |
-		(UInt128(R0b) << (p + 2)) |
-		(UInt128(e) << p) |
-		M
+		(UInt128(S) << 127) | (R << (p + 3)) | (UInt128(R0b) << (p + 2)) |
+		(UInt128(e) << p) | M
 
 	# round to 64-bit, adhering to proper saturation
 	t64 = reinterpret(

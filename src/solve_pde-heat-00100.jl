@@ -9,7 +9,16 @@ using PDE
 write_experiment_results(
 	ExperimentResults(
 		Experiment(;
-			parameters = [PDEExperimentParameters(HeatPDEParameters(; Nx = 100, Nt = Nt, α = 1e6, σ = 0.1)) for Nt in 1:500],
+			parameters = [
+				PDEExperimentParameters(
+					HeatPDEParameters(;
+						Nx = 100,
+						Nt = Nt,
+						α = 1e6,
+						σ = 0.1,
+					),
+				) for Nt in 1:500
+			],
 			number_types = Experiments.all_number_types,
 		),
 	),

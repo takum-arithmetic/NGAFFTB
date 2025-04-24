@@ -6,8 +6,7 @@ using Crutches
 using GenericFFT
 using LinearAlgebra
 
-export AbstractPDEParameters, AbstractPDEResult, HeatPDEParameters,
-	PoissonPDEParameters, solve
+export AbstractPDEParameters, AbstractPDEResult, HeatPDEParameters, PoissonPDEParameters, solve
 
 abstract type AbstractPDEParameters end
 abstract type AbstractPDEResult end
@@ -28,7 +27,7 @@ function solve(parameters::HeatPDEParameters, ::Type{T}) where {T <: AbstractFlo
 
 	# use a Gaussian pulse centered at 0.5 with initial width sigma0
 	# as an initial condition
-	u0 = exp.(-((x .- T(0.5)).^2) / (T(2) * parameters.σ^2))
+	u0 = exp.(-((x .- T(0.5)) .^ 2) / (T(2) * parameters.σ^2))
 	#u0 = (xs -> ((xs >= 0.4 && xs <= 0.6) ? one(T) : zero(T))).(x)
 
 	# compute the DFT sample frequencies
@@ -38,7 +37,7 @@ function solve(parameters::HeatPDEParameters, ::Type{T}) where {T <: AbstractFlo
 	uhat = fft(u0)
 
 	# precompute the exponential integrating factor
-	E = exp.(-T(parameters.α) * k.^2 * dt)
+	E = exp.(-T(parameters.α) * k .^ 2 * dt)
 
 	# iterate over time, applying the integrating factor in Fourier
 	# space in each time step
@@ -71,11 +70,13 @@ function solve(parameters::PoissonPDEParameters, ::Type{T}) where {T <: Abstract
 	# Laplacian in frequency domain, avoiding division by zero at
 	# zero frequencies
 	L = [-(kx^2 + ky^2) for kx in k, ky in k]
-	L[1,1] = one(T)
+	L[1, 1] = one(T)
 
 	# generate initial conditions
-	rsq(x,y) = (x - 0.5)^2 + (y - 0.5)^2
-	f(x,y) = exp(-rsq(x,y)/(2*parameters.σ^2)) * (rsq(x,y) - 2*parameters.σ^2)/(parameters.σ^4)
+	rsq(x, y) = (x - 0.5)^2 + (y - 0.5)^2
+	f(x, y) =
+		exp(-rsq(x, y)/(2*parameters.σ^2)) *
+		(rsq(x, y) - 2*parameters.σ^2)/(parameters.σ^4)
 	F = [f(xi, yi) for xi in x, yi in x]
 
 	# perform FFT
@@ -86,9 +87,9 @@ function solve(parameters::PoissonPDEParameters, ::Type{T}) where {T <: Abstract
 
 	# perform inverse FFT to obtain spatial solution
 	u = real(ifft(u_hat))
-	
+
 	# ensure uniqueness by forcing corner (0,0) to be zero
-	u = u .- u[1,1]
+	u = u .- u[1, 1]
 
 	return u
 end
