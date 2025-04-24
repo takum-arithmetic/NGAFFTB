@@ -1,0 +1,1127 @@
+\documentclass[a4,oneside]{scrbook}
+
+%%% language, encoding, font, date %%%
+\usepackage[american]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[american]{isodate}
+
+%%% math %%%
+\usepackage{amsmath}
+
+%%% graphics, plots %%%
+\usepackage{graphicx}
+\usepackage{pgf, tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{statistics}
+\usepackage{placeins}
+
+\usepackage{subfig}
+\usepackage[margin=2cm]{geometry}
+\usepackage{pgfplots}
+
+%%% misc %%%
+\usepackage[autostyle=true]{csquotes}
+\usepackage{siunitx}
+\usepackage{xcolor}
+
+\definecolor{posit}{HTML}{b02a2d}
+\definecolor{bfloat16}{HTML}{007900}
+\definecolor{takum}{HTML}{1f5dc2}
+\definecolor{float}{HTML}{636363}
+
+\begin{document}
+\begin{figure*}[tbp]
+	\begin{center}
+        \subfloat[$N_x = 10^2$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-1,0.530758},
+    				yticklabels={-1,-0.3},
+    				extra y ticks={1e0},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.08,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.4)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e0},
+    				yticklabels={-4,-2,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.05)},anchor=south east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.85,0.15)},anchor=south east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-heat-00100/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[$N_x = 10^3$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-1,0.530758},
+    				yticklabels={-1,-0.3},
+    				extra y ticks={1e0},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.08,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.5)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e0},
+    				yticklabels={-4,-2,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-heat-01000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[$N_x = 5 \cdot 10^3$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-3,1e-1,0.71489778},
+    				yticklabels={-3,-1,-0.1},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.5)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e0},
+    				yticklabels={-4,-2,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-heat-05000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[$N_x = 10^4$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-1,0.530758},
+    				yticklabels={-1,-0.3},
+    				extra y ticks={1e0},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.08,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.5)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e0},
+    				yticklabels={-4,-2,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-heat-10000/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }
+	\end{center}
+	\caption{
+		Cumulative error distribution of the relative errors of
+		the heat equation PDE test problem solutions computed
+		using a range of machine number types, with the specified
+		space discretization parameter $N_x$ and $N_t \in \{ 1,\dots,500 \}$.
+		The symbol $\infty$ denotes an overflow in the underlying number type.
+	}
+	\label{fig:pde-heat}
+\end{figure*}
+
+\begin{figure*}[tbp]
+	\begin{center}
+        \subfloat[$\sigma = 0.1$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e-1,1e0,1e1},
+    				yticklabels={-4,-2,-1,0,1},
+    				extra y ticks={1e2},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.5,0.4)},anchor=south},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-6,1e-4,1e-2,1e0},
+    				yticklabels={-6,-4,-2,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.05)},anchor=south east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-poisson-0_1/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[$\sigma = 0.2$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e-1,1e0},
+    				yticklabels={-4,-2,-1,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.5)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-6,1e-4,1e-2},
+    				yticklabels={-6,-4,-2},
+    				extra y ticks={1e0},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-poisson-0_2/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[$\sigma = 0.3$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e-1,1e0,1e1},
+    				yticklabels={-4,-2,-1,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.5)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-6,1e-4,1e-2},
+    				yticklabels={-6,-4,-2},
+    				extra y ticks={1e-1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-poisson-0_3/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[$\sigma = 0.4$]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e-1,1e0},
+    				yticklabels={-4,-2,-1,0},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.5)},anchor=east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-6,1e-4,1e-2},
+    				yticklabels={-6,-4,-2},
+    				extra y ticks={1e-1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-9,1e-7,1e-5},
+    				yticklabels={-9,-7,-5},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ymin=0.0000000005,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/3.7,
+    				height=\textwidth/4.8,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.95)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/solve_pde-poisson-0_4/relative_error.sorted.csv};
+    				    %\addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }
+	\end{center}
+	\caption{
+		Cumulative error distribution of the relative errors of
+		the \textsc{Poisson} equation PDE test problem solutions computed
+		using a range of machine number types, with the specified
+		right-hand side parameter $\sigma$ and $N_x \in \{ 2,\dots,100 \}$.
+		The symbol $\infty$ denotes an overflow in the underlying number type.
+	}
+	\label{fig:pde-poisson}
+\end{figure*}
+
+\begin{figure*}[tbp]
+	\begin{center}
+        \subfloat[8 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e1,1e3,1e5,1e7},
+    				yticklabels={1,3,5,7},
+    				extra y ticks={1e8},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.2)},anchor=south east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    	}
+    	\subfloat[16 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-4,1e-2,1e0,1e2,1e4},
+    				yticklabels={-4,-2,0,2,4},
+    				extra y ticks={1e5},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.25)},anchor=south east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[32 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-7,1e-6,1e-5,1e3},
+    				yticklabels={-7,-6,-5,3},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.55)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }
+        \subfloat[64 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-15,1e-14,1e-13,1e-11},
+    				yticklabels={-15,-14,-13,-11},
+    				extra y ticks={},
+    				extra y tick labels={},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.75)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float64]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float64}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum64]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum64}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit64]{../out/fft_images/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit64}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }
+	\end{center}
+	\caption{
+		Cumulative error distribution of the relative errors of
+		the image FFT solutions computed
+		using a range of machine number types.
+		The symbol $\infty$ denotes an overflow in the underlying number type.
+	}
+	\label{fig:images}
+\end{figure*}
+
+\begin{figure*}[tbp]
+	\begin{center}
+        \subfloat[8 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e0,3.162278},
+    				yticklabels={0,0.5},
+    				extra y ticks={1e1},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.5)},anchor=west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float8_4]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E4M3}};
+    				\addplot[float,densely dashed] table [col sep=comma, x=percent, y=Float8_5]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{OFP8 E5M2}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum8]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum8}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit8]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit8}};
+    			\end{axis}
+    		\end{tikzpicture}
+    	}
+    	\subfloat[16 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-3,0.0031623},
+    				yticklabels={-3,-2.5},
+    				extra y ticks={1e5},
+    				extra y tick labels={$\infty$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.95,0.25)},anchor=south east},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float16]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float16}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum16]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum16}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit16]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit16}};
+    				\addplot[bfloat16,densely dashed] table [col sep=comma, x=percent, y=BFloat16]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{bfloat16}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }\\
+        \subfloat[32 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={3.162278e-8,1e-7},
+    				yticklabels={-7.5,-7},
+    				extra y ticks={1e6},
+    				extra y tick labels={$\infty_\omega$},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.55)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float32]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float32}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum32]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum32}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit32]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit32}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }
+        \subfloat[64 bits]{
+    		\begin{tikzpicture}
+    			\begin{axis}[
+    				scaled y ticks={base 10:-2},
+    				ytick={1e-21,1e-19,1e-18,1e-17,1e-16},
+    				yticklabels={-21,-19,-18,-17,-16},
+    				extra y ticks={},
+    				extra y tick labels={},
+    				grid=major,
+    				ymode=log,
+    				xmin=0,
+    				xmax=1,
+    				%ylabel={$\log_{10}(\text{relative error})$},
+                    %ylabel shift=-0.2cm,
+    				scale only axis,
+    				width=\textwidth/2.4,
+    				height=\textwidth/5.1,
+    				xtick={0,0.25,0.5,0.75,1.0},
+    				xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+    				point meta={x*100},
+    				legend style={nodes={scale=0.8, transform shape}},
+    				legend style={at={(0.05,0.75)},anchor=north west},
+    				]
+    				\addplot[float,thick] table [col sep=comma, x=percent, y=Float64]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{float64}};
+    				\addplot[takum] table [col sep=comma, x=percent, y=LinearTakum64]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{takum64}};
+    				\addplot[posit,densely dotted,semithick] table [col sep=comma, x=percent, y=Posit64]{../out/fft_audios/relative_error.sorted.csv};
+    				    \addlegendentry{\texttt{posit64}};
+    			\end{axis}
+    		\end{tikzpicture}
+        }
+	\end{center}
+	\caption{
+		Cumulative error distribution of the relative errors of
+		the audio STFT solutions computed
+		using a range of machine number types.
+		The symbol $\infty$ denotes an overflow in the underlying number type.
+	}
+	\label{fig:audios}
+\end{figure*}
+\end{document}

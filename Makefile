@@ -30,21 +30,21 @@ GENERATOR =\
 	src/generate_audio_dataset\
 	src/generate_image_dataset\
 
-all: $(EXPERIMENT:=.output_sorted)
+all: $(EXPERIMENT:=.output_sorted) plots/fft.pdf
 
 src/generate_audio_dataset.output: src/generate_audio_dataset.sh config.mk Makefile
 src/generate_image_dataset.output: src/generate_image_dataset.sh config.mk Makefile
 
-src/fft_audios.output: src/fft_audios.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/fft_images.output: src/fft_images.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-heat-00100.output: src/solve_pde-heat-00100.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-heat-01000.output: src/solve_pde-heat-01000.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-heat-05000.output: src/solve_pde-heat-05000.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-heat-10000.output: src/solve_pde-heat-10000.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-poisson-0_1.output: src/solve_pde-poisson-0_1.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-poisson-0_2.output: src/solve_pde-poisson-0_2.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-poisson-0_3.output: src/solve_pde-poisson-0_3.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
-src/solve_pde-poisson-0_4.output: src/solve_pde-poisson-0_4.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/fft_audios.output: src/fft_audios.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/generate_audio_dataset.output config.mk Makefile
+src/fft_images.output: src/fft_images.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/generate_image_dataset.output config.mk Makefile
+src/solve_pde-heat-00100.output: src/solve_pde-heat-00100.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-heat-01000.output: src/solve_pde-heat-01000.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-heat-05000.output: src/solve_pde-heat-05000.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-heat-10000.output: src/solve_pde-heat-10000.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-poisson-0_1.output: src/solve_pde-poisson-0_1.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-poisson-0_2.output: src/solve_pde-poisson-0_2.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-poisson-0_3.output: src/solve_pde-poisson-0_3.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
+src/solve_pde-poisson-0_4.output: src/solve_pde-poisson-0_4.jl src/Crutches.jl src/Experiments.jl src/Float128Conversions.jl src/PDE.jl config.mk Makefile
 
 src/fft_audios.output_sorted: src/fft_audios.output src/sort_csv.jl
 src/fft_images.output_sorted: src/fft_images.output src/sort_csv.jl
@@ -79,6 +79,9 @@ src/solve_pde-poisson-0_4.output_sorted: src/solve_pde-poisson-0_4.output src/so
 	@# (.output_sorted) containing the file names
 	$(JULIA) $(JULIA_FLAGS) -- "src/sort_csv.jl" "$<" > "$@.temp" && mv -f "$@.temp" "$@"
 
+plots/fft.pdf: plots/fft.tex
+	latexmk -pdf -cd plots/fft.tex
+
 clean:
 	@# use the output witnesses to clean up the output files, except
 	@# those from the generators
@@ -87,6 +90,7 @@ clean:
 	for d in $(EXPERIMENT); do if [ -d "`basename "$$d"`" ]; then rmdir "out/`basename "$$d"`"; fi; done
 	rm -f $(EXPERIMENT:=.output) $(EXPERIMENT:=.output.temp) $(EXPERIMENT:=.output_sorted) $(EXPERIMENT:=.output_sorted.temp)
 	rm -f $(COMMON:=.format) $(EXPERIMENT:=.format)
+	latexmk -C -cd plots/fft.tex
 	@# remove empty folders in data/ and out/ recursively
 	find data/ out/ -empty -type d -delete
 
