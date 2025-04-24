@@ -87,10 +87,14 @@ clean:
 	for d in $(EXPERIMENT); do if [ -d "`basename "$$d"`" ]; then rmdir "out/`basename "$$d"`"; fi; done
 	rm -f $(EXPERIMENT:=.output) $(EXPERIMENT:=.output.temp) $(EXPERIMENT:=.output_sorted) $(EXPERIMENT:=.output_sorted.temp)
 	rm -f $(COMMON:=.format) $(EXPERIMENT:=.format)
+	@# remove empty folders in data/ and out/ recursively
+	find data/ out/ -empty -type d -delete
 
 clean-generated:
 	@# remove the generated files using the output witnesses
 	for w in $(GENERATOR:=.output); do if [ -f "$$w" ]; then xargs rm -f < "$$w"; fi; done
+	@# remove empty folders in data/ and out/ recursively
+	find data/ out/ -empty -type d -delete
 
 format: $(COMMON:=.format) $(EXPERIMENT:=.format) $(GENERATOR:=.format)
 
